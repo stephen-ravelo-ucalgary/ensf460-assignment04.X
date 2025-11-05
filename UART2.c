@@ -138,7 +138,7 @@ void Disp2Hex(unsigned int DispData)
     XmitUART2('0',1);  // Disp Hex notation 0x
     XmitUART2('x',1);
     
-    for (i=3; i>=0; i--)
+    for (i=2; i>=0; i--)
     {
         nib = ((DispData >> (4*i)) & 0x000F);
         if (nib >= 0x0A)
@@ -219,6 +219,16 @@ void Disp2String(char *str) //Displays String of characters
     }
     // XmitUART2(0x0A,2);  //LF
     // XmitUART2(0x0D,1);  //CR 
+    
+    return;
+}
+
+
+void DispMode0(uint16_t x) {
+    Disp2String("\033[2J\033[HMode 0: ");
+    XmitUART2('*', x / 32 + 1);
+    XmitUART2(' ', 1);
+    Disp2Hex(x);
     
     return;
 }

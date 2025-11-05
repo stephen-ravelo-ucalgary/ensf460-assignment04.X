@@ -30,5 +30,7 @@ void Disp2Hex32(unsigned long int);
 void Disp2String(char*);
 void Disp2Dec(unsigned int);
 
+void DispMode0(uint16_t x);
+
 #endif	/* UART2_H */
 

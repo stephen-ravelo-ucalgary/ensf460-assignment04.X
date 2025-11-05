@@ -29,6 +29,9 @@ void delay_ms(uint16_t time_ms) {
     // idle until timer 2 interrupt
     while (T2CONbits.TON == 1) {
         Idle();
+        if (IOcheck()) {
+            T2CONbits.TON == 0;
+        }
     }
     
     return;
