@@ -61,6 +61,15 @@
  * You might find it useful to add your own #defines to improve readability here
  */
 
+typedef enum {
+    STATE_MODE_0,
+    STATE_MODE_1,      
+} state_t;
+
+state_t state;
+
+uint16_t CN_event;
+
 int main(void) {
     
     /** This is usually where you would add run-once code
@@ -83,26 +92,43 @@ int main(void) {
     /* Let's set up our UART */    
     InitUART2();
     
-    _state = STATE_MODE_0;
+    state = STATE_MODE_0;
+    CN_event = 0;
     
     uint16_t ADC1_val = do_ADC();
     uint16_t ADC1_last = ADC1_val + 16;
     
     while(1) {
-        switch(_state) {
+        switch(state) {
             case STATE_MODE_0:
-                while(_state == STATE_MODE_0) {
+                while(state == STATE_MODE_0) {
                     ADC1_val = do_ADC();
                     if (ADC1_val != ADC1_last) {
                         DispMode0(ADC1_val);
                     }
                     ADC1_last = ADC1_val;
                     delay_ms(1000);
+                    if (CN_event) {
+                        if (IOcheck() == 1) {
+                            state = STATE_MODE_1;
+                        }
+                        CN_event = 0;
+                    }
                 }
                 break;
             case STATE_MODE_1:
-                Disp2String("\033[2J\033[HMode 1: ");
-                Idle();
+                while (state == STATE_MODE_1) {
+                    Disp2String("\033[2J\033[HMode 1: Press PB2 to start data streaming");
+                    Idle();
+                    delay_ms(50);
+                    if (CN_event) {
+                        if (IOcheck() == 1) {
+                            state = STATE_MODE_0;
+                            DispMode0(ADC1_val);
+                        }
+                        CN_event = 0;
+                    }
+                }
                 break;
             default:
                 Idle();
@@ -128,4 +154,6 @@ void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void){
 void __attribute__((interrupt, no_auto_psv)) _CNInterrupt(void){
     //Don't forget to clear the CN interrupt flag!
     IFS1bits.CNIF = 0;
+    
+    CN_event = 1;
 }

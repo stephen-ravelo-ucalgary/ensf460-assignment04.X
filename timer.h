@@ -12,6 +12,8 @@
 #include <xc.h>
 #include "IOs.h"
 
+extern uint16_t _skip_delay;
+
 void timerInit();
 void delay_ms();
 

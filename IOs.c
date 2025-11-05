@@ -8,8 +8,6 @@
 
 #include "IOs.h"
 
-state_t _state;
-
 // Initialize peripheral IO
 void IOinit() {
     // LED1
@@ -36,15 +34,8 @@ void IOinit() {
 
 // Execute logic for peripheral IO
 uint16_t IOcheck() {   
-    if (_state == STATE_MODE_0 || _state == STATE_MODE_1) {
-        if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1) {
-            if (_state == STATE_MODE_0) {
-                _state = STATE_MODE_1;
-            } else {
-                _state = STATE_MODE_0;
-            }
-            return 1;
-        }
+    if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1) {
+        return 1;
     }
     
     return 0;

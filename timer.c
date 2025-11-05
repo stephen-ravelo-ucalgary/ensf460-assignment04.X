@@ -8,6 +8,8 @@
 
 #include "timer.h"
 
+uint16_t _skip_delay = 0;
+
 void timerInit() {
     // TMR2 config
     T2CONbits.T32 = 0;
@@ -29,9 +31,7 @@ void delay_ms(uint16_t time_ms) {
     // idle until timer 2 interrupt
     while (T2CONbits.TON == 1) {
         Idle();
-        if (IOcheck()) {
-            T2CONbits.TON == 0;
-        }
+        if (IOcheck()) { break; }
     }
     
     return;
