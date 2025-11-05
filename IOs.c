@@ -37,6 +37,9 @@ uint16_t IOcheck() {
     if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1) {
         return 1;
     }
+    else if (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 1) {
+        return 2;
+    }
     
     return 0;
 }

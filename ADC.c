@@ -38,3 +38,12 @@ uint16_t do_ADC(void) {
     AD1CON1bits.ADON=0; //Turn off ADC, ADC value stored in ADC1BUF0;
     return (ADCvalue); //returns 10 bit ADC output stored in ADC1BIF0 to calling function
 }
+
+void read_ADC() {
+    Disp2String("START_READING\n");
+    for (int i = 0; i < 10; i++) {
+        Disp2Dec(do_ADC());
+        delay_ms(1000);
+    }
+    Disp2String("STOP_READING\n");
+}

@@ -200,7 +200,7 @@ void Disp2Dec(uint16_t Dec_num)
         ctr = ctr + 1;
     }
     XmitUART2(' ',1);  // Disp Gap
-    // XmitUART2('\n',1);  // new line
+    XmitUART2('\n',1);  // new line
     // XmitUART2('\r',1);  // carriage return
    
     return;
@@ -229,6 +229,7 @@ void DispMode0(uint16_t x) {
     XmitUART2('*', x / 32 + 1);
     XmitUART2(' ', 1);
     Disp2Hex(x);
+    XmitUART2('\n', 1);
     
     return;
 }

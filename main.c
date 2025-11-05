@@ -109,7 +109,8 @@ int main(void) {
                     ADC1_last = ADC1_val;
                     delay_ms(1000);
                     if (CN_event) {
-                        if (IOcheck() == 1) {
+                        uint16_t IO_event = IOcheck();
+                        if (IO_event == 1) {
                             state = STATE_MODE_1;
                         }
                         CN_event = 0;
@@ -118,13 +119,16 @@ int main(void) {
                 break;
             case STATE_MODE_1:
                 while (state == STATE_MODE_1) {
-                    Disp2String("\033[2J\033[HMode 1: Press PB2 to start data streaming");
+                    Disp2String("\033[2J\033[HMode 1: Press PB2 to start data streaming\n");
                     Idle();
                     delay_ms(50);
                     if (CN_event) {
-                        if (IOcheck() == 1) {
+                        uint16_t IO_event = IOcheck();
+                        if (IO_event == 1) {
                             state = STATE_MODE_0;
                             DispMode0(ADC1_val);
+                        } else if (IO_event == 2) {
+                            read_ADC();
                         }
                         CN_event = 0;
                     }
