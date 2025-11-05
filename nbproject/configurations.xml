@@ -7,6 +7,8 @@
       <itemPath>clkChange.h</itemPath>
       <itemPath>UART2.h</itemPath>
       <itemPath>ADC.h</itemPath>
+      <itemPath>IOs.h</itemPath>
+      <itemPath>timer.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -24,6 +26,8 @@
       <itemPath>UART2.c</itemPath>
       <itemPath>clkChange.c</itemPath>
       <itemPath>ADC.c</itemPath>
+      <itemPath>IOs.c</itemPath>
+      <itemPath>timer.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

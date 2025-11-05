@@ -53,9 +53,14 @@
 #include <p24F16KA101.h>
 #include "clkChange.h"
 #include "UART2.h"
+#include "ADC.h"
+#include "IOs.h"
 
+#define STATE_OFF -1
+#define STATE_MODE_0 0
+#define STATE_MODE_1 1
 
-uint16_t PB3_event;
+uint16_t state;
 
 /**
  * You might find it useful to add your own #defines to improve readability here
@@ -72,37 +77,9 @@ int main(void) {
     AD1PCFG = 0xFFFF; /* keep this line as it sets I/O pins that can also be analog to be digital */
     
     newClk(500);
-    
-    //T3CON config
-    T2CONbits.T32 = 0; // operate timer 2 as 16 bit timer
-    T3CONbits.TCKPS = 1; // set prescaler to 1:8
-    T3CONbits.TCS = 0; // use internal clock
-    T3CONbits.TSIDL = 0; //operate in idle mode
-    IPC2bits.T3IP = 2; //7 is highest and 1 is lowest pri.
-    IFS0bits.T3IF = 0;
-    IEC0bits.T3IE = 1; //enable timer interrupt
-    PR3 = 15625; // set the count value for 0.5 s (or 500 ms)
-    TMR3 = 0;
-    T3CONbits.TON = 1;
 
-    /* Let's set up some I/O */
-    TRISBbits.TRISB9 = 0;
-    LATBbits.LATB9 = 1;
-    
-    TRISAbits.TRISA4 = 1;
-    CNPU1bits.CN0PUE = 1;
-    CNEN1bits.CN0IE = 1;
-    
-    TRISBbits.TRISB4 = 1;
-    CNPU1bits.CN1PUE = 1;
-    CNEN1bits.CN1IE = 1;
-    
-    TRISBbits.TRISB7 = 1;
-    CNPU2bits.CN23PUE = 1;
-    CNEN2bits.CN23IE = 1;
-    
-    /* Let's clear some flags */
-    PB3_event = 0;
+    timerInit();
+    IOinit();
     
     IPC4bits.CNIP = 6;
     IFS1bits.CNIF = 0;
@@ -110,15 +87,22 @@ int main(void) {
     
     /* Let's set up our UART */    
     InitUART2();
-  
+    
+    state = STATE_MODE_1;
     
     while(1) {
-        
-        Idle();
-        
-        if (PB3_event) {
-            Disp2String("PB3 event\n\r");
-            PB3_event = 0;
+        switch(state) {
+            case STATE_MODE_1:
+                while(state == STATE_MODE_1) {
+                    Disp2String("\033[2J\033[HMode 0: ");
+                    Disp2Hex(do_ADC());
+                    Disp2String("\r");
+                    delay_ms(1000);
+                }
+                break;
+            default:
+                Idle();
+                break;
         }
     }
     
@@ -127,20 +111,17 @@ int main(void) {
 
 
 // Timer 2 interrupt subroutine
-void __attribute__((interrupt, no_auto_psv)) _T2Interrupt(void){
-    //Don't forget to clear the timer 2 interrupt flag!
+void __attribute__((interrupt, no_auto_psv)) _T2Interrupt(void) 
+{
     IFS0bits.T2IF = 0;
+    T2CONbits.TON = 0;
 }
 
 void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void){
-    //Don't forget to clear the timer 2 interrupt flag!
     IFS0bits.T3IF = 0;
-    _LATB9 ^= 1;
 }
 
 void __attribute__((interrupt, no_auto_psv)) _CNInterrupt(void){
     //Don't forget to clear the CN interrupt flag!
     IFS1bits.CNIF = 0;
-
-    PB3_event = 1;
 }

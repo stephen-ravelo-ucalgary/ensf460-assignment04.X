@@ -153,7 +153,7 @@ void Disp2Hex(unsigned int DispData)
     }
     
     XmitUART2(' ',1);
-    DispData = 0x0000;  // Clear DispData
+    DispData = 0x000;  // Clear DispData
     return;
 }
 

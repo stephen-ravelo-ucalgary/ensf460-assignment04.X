@@ -1,19 +1,32 @@
+#include <p24F16KA101.h>
+
 #include "ADC.h"
 
 uint16_t do_ADC(void) {
     uint16_t ADCvalue ; // 16 bit register used to hold ADC converted digital output ADC1BUF0
     /* ------------- ADC INITIALIZATION ------------------*/
-    ..... // Configure ADC by setting bits in AD1CON1 register
-    .....
+    // Configure ADC by setting bits in AD1CON1 register
+    AD1CON1bits.ADSIDL = 0;
+    AD1CON1bits.FORM = 0b00;
+    AD1CON1bits.SSRC = 0b111;
+    AD1CON1bits.ASAM = 0;
             
     AD1CON2bits.VCFG = 0b000; // Selects AVDD, AVSS (supply voltage to PIC) as Vref
-    ..... // Configure ADC by setting bits in AD1CON2
+    // Configure ADC by setting bits in AD1CON2
+    AD1CON2bits.CSCNA = 0;        
+//    AD1CON2bits.SMPI = 0b000;        
+    AD1CON2bits.BUFM = 0;        
+    AD1CON2bits.ALTS = 0;        
             
     AD1CON3bits.ADRC = 0; // Use system clock
-    ..... //Configure the ADC?s sample time by setting bits in AD1CON3
-    ..... // Ensure sample time is 1/10th of signal being sampled
-            
-    ..... // Select and configure ADC input
+    //Configure the ADC?s sample time by setting bits in AD1CON3
+    // Ensure sample time is 1/10th of signal being sampled
+    AD1CON3bits.SAMC = 0b11111;       
+    // Select and configure ADC input
+    AD1CHSbits.CH0NA = 0;
+    AD1CHSbits.CH0SA = 0b0101;
+    AD1PCFGbits.PCFG5 = 0;
+    AD1CSSLbits.CSSL5 = 0;
             
     /* ------------- ADC SAMPLING AND CONVERSION ------------------*/
     AD1CON1bits.ADON = 1; // turn on ADC module
