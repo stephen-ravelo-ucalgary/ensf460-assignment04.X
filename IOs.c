@@ -34,17 +34,7 @@ void IOinit() {
 
 // Execute logic for peripheral IO
 void IOcheck() {   
-//    if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1) {
-//        while (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1) {
-//            if (count >= 5 && getSeconds() % 5 == 0) {
-//                incrementSeconds(5);
-//            } else {
-//                incrementSeconds(1);
-//                count++;
-//            }
-//            displaySET();
-//            delay_ms(500);
-//        }
-//        count = 0;
-//    }
+    if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1) {
+        
+    }
 }

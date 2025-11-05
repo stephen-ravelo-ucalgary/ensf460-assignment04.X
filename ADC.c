@@ -24,9 +24,9 @@ uint16_t do_ADC(void) {
     AD1CON3bits.SAMC = 0b11111;       
     // Select and configure ADC input
     AD1CHSbits.CH0NA = 0;
-    AD1CHSbits.CH0SA = 0b0101;
-    AD1PCFGbits.PCFG5 = 0;
-    AD1CSSLbits.CSSL5 = 0;
+    AD1CHSbits.CH0SA = 0b1100;
+    AD1PCFGbits.PCFG12 = 0;
+    AD1CSSLbits.CSSL12 = 0;
             
     /* ------------- ADC SAMPLING AND CONVERSION ------------------*/
     AD1CON1bits.ADON = 1; // turn on ADC module

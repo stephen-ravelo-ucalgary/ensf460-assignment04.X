@@ -56,11 +56,13 @@
 #include "ADC.h"
 #include "IOs.h"
 
-#define STATE_OFF -1
-#define STATE_MODE_0 0
-#define STATE_MODE_1 1
+typedef enum {
+    STATE_OFF,
+    STATE_MODE_0,
+    STATE_MODE_1        
+} state_t;
 
-uint16_t state;
+state_t state;
 
 /**
  * You might find it useful to add your own #defines to improve readability here
@@ -88,17 +90,25 @@ int main(void) {
     /* Let's set up our UART */    
     InitUART2();
     
-    state = STATE_MODE_1;
+    state = STATE_MODE_0;
+    
+    uint16_t ADC1_val = do_ADC();
+    uint16_t ADC1_last = ADC1_val + 16;
     
     while(1) {
         switch(state) {
-            case STATE_MODE_1:
-                while(state == STATE_MODE_1) {
-                    Disp2String("\033[2J\033[HMode 0: ");
-                    Disp2Hex(do_ADC());
-                    Disp2String("\r");
+            case STATE_MODE_0:
+                while(state == STATE_MODE_0) {
+                    ADC1_val = do_ADC();
+                    if (ADC1_val != ADC1_last) {
+                        Disp2String("\033[2J\033[HMode 0: ");
+                        Disp2Hex(do_ADC());
+                    }
+                    ADC1_last = ADC1_val;
                     delay_ms(1000);
                 }
+                break;
+            case STATE_MODE_1:
                 break;
             default:
                 Idle();
