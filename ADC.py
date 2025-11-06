@@ -26,8 +26,8 @@ try:
     
     while True:
         if ser.in_waiting > 0:
-            msg = ser.readline().decode().replace('\x00', '').replace('\n', '')
-            if msg == "START_READING":
+            msg = ser.readline().decode().replace('\x00', '')
+            if msg == "START_READING\n":
                 print("Sampling data...")
                 t0 = time.time()
 
