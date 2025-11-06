@@ -1,9 +1,20 @@
+/*
+ * File Name: ADC.c
+ * Assignment: Assignment 4
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
+ * Submission Date: November 7, 2025
+ */
+
 #include <p24F16KA101.h>
 
 #include "ADC.h"
 
+/*
+ * Configures ADC and returns buffer
+ */
 uint16_t do_ADC(void) {
-    uint16_t ADCvalue ; // 16 bit register used to hold ADC converted digital output ADC1BUF0
+    uint16_t ADCvalue; // 16 bit register used to hold ADC converted digital output ADC1BUF0
     /* ------------- ADC INITIALIZATION ------------------*/
     // Configure ADC by setting bits in AD1CON1 register
     AD1CON1bits.ADSIDL = 0;
@@ -24,9 +35,9 @@ uint16_t do_ADC(void) {
     AD1CON3bits.SAMC = 0b11111;       
     // Select and configure ADC input
     AD1CHSbits.CH0NA = 0;
-    AD1CHSbits.CH0SA = 0b0101;
-    AD1PCFGbits.PCFG5 = 0;
-    AD1CSSLbits.CSSL5 = 0;
+    AD1CHSbits.CH0SA = 0b1100;
+    AD1PCFGbits.PCFG12 = 0;
+    AD1CSSLbits.CSSL12 = 0;
             
     /* ------------- ADC SAMPLING AND CONVERSION ------------------*/
     AD1CON1bits.ADON = 1; // turn on ADC module
@@ -37,4 +48,18 @@ uint16_t do_ADC(void) {
     AD1CON1bits.SAMP=0; //Stop sampling
     AD1CON1bits.ADON=0; //Turn off ADC, ADC value stored in ADC1BUF0;
     return (ADCvalue); //returns 10 bit ADC output stored in ADC1BIF0 to calling function
+}
+
+/*
+ * Samples ADC buffer values for approximately 10 seconds.
+ * Uses START_READING and STOP_READING messages to trigger sampling in
+ * python program.
+ */
+void read_ADC(uint16_t samples) {
+    Disp2String("START_READING\n");
+    for (int i = 0; i < samples; i++) {
+        Disp2Dec(do_ADC());
+        delay_ms(10000/samples);
+    }
+    Disp2String("STOP_READING\n");
 }

@@ -1,8 +1,9 @@
 /*
- * File:   main.c
- * Author: UPDATE THIS WITH YOUR GROUP MEMBER NAMES OR POTENTIALLY LOSE POINTS
- *
- * Created on: USE THE INFORMATION FROM THE HEADER MPLAB X IDE GENERATES FOR YOU
+ * File Name: main.c
+ * Assignment: Assignment 4
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
+ * Submission Date: November 7, 2025
  */
 
 // FBS
@@ -55,24 +56,17 @@
 #include "UART2.h"
 #include "ADC.h"
 #include "IOs.h"
-
-#define STATE_OFF -1
-#define STATE_MODE_0 0
-#define STATE_MODE_1 1
-
-uint16_t state;
+#include "timer.h"
 
 /**
  * You might find it useful to add your own #defines to improve readability here
  */
 
+uint16_t CN_event;
+
 int main(void) {
     
-    /** This is usually where you would add run-once code
-     * e.g., peripheral initialization. For the first labs
-     * you might be fine just having it here. For more complex
-     * projects, you might consider having one or more initialize() functions
-     */
+    // Run once code
     
     AD1PCFG = 0xFFFF; /* keep this line as it sets I/O pins that can also be analog to be digital */
     
@@ -88,16 +82,60 @@ int main(void) {
     /* Let's set up our UART */    
     InitUART2();
     
-    state = STATE_MODE_1;
+    _state = STATE_MODE_0;
+    CN_event = 0;
     
+    uint16_t ADC1_val = do_ADC();
+    uint16_t ADC1_last = ADC1_val + 16;
+    
+    // Main loop
     while(1) {
-        switch(state) {
-            case STATE_MODE_1:
-                while(state == STATE_MODE_1) {
-                    Disp2String("\033[2J\033[HMode 0: ");
-                    Disp2Hex(do_ADC());
-                    Disp2String("\r");
+        switch(_state) {
+            /* 
+             * Displays number of '*' proportional to displayed ADC value
+             * Pressing PB1 in this state triggers a transition to STATE_MODE_1
+             */
+            case STATE_MODE_0:
+                while(_state == STATE_MODE_0) {
+                    ADC1_val = do_ADC();
+                    if (ADC1_val != ADC1_last) {
+                        DispMode0(ADC1_val);
+                    }
+                    ADC1_last = ADC1_val;
                     delay_ms(1000);
+                    if (CN_event) {
+                        uint16_t IO_event = IOcheck();
+                        if (IO_event == 1) {
+                            _state = STATE_MODE_1;
+                        }
+                        CN_event = 0;
+                    }
+                }
+                break;
+            /* 
+             * Pressing PB1 in this state triggers a transition to STATE_MODE_2
+             * Pressing PB2 in this state samples ADC data for 10 seconds
+             * A 'hidden' state STATE_READ_ADC protects data sampling
+             */
+            case STATE_MODE_1:
+                while (_state == STATE_MODE_1) {
+                    Disp2String("\033[2J\033[1;1HMode 1: Press PB2 to start data streaming\n");
+                    delay_ms(50);
+                    Idle();
+                    delay_ms(50);
+                    if (CN_event) {
+                        uint16_t IO_event = IOcheck();
+                        if (IO_event == 1) {
+                            _state = STATE_MODE_0;
+                            DispMode0(ADC1_val);
+                        } else if (IO_event == 2) {
+                            _state = STATE_READ_ADC;
+                            read_ADC();
+                            _state = STATE_MODE_1;
+                            Idle();
+                        }
+                        CN_event = 0;
+                    }
                 }
                 break;
             default:
@@ -117,11 +155,13 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt(void)
     T2CONbits.TON = 0;
 }
 
-void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void){
-    IFS0bits.T3IF = 0;
-}
-
+/*
+ * CN interrupt subroutine
+ * Triggers CN_event
+ */
 void __attribute__((interrupt, no_auto_psv)) _CNInterrupt(void){
     //Don't forget to clear the CN interrupt flag!
     IFS1bits.CNIF = 0;
+    
+    CN_event = 1;
 }

@@ -1,12 +1,14 @@
 /*
  * File Name: timer.c
- * Assignment: Project 1
+ * Assignment: Assignment 4
  * Lab Section: B02
  * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
- * Submission Date: October 26, 2025
+ * Submission Date: November 7, 2025
  */
 
 #include "timer.h"
+
+uint16_t _skip_delay = 0;
 
 void timerInit() {
     // TMR2 config
@@ -26,9 +28,10 @@ void delay_ms(uint16_t time_ms) {
     
     T2CONbits.TON = 1;
     
-    // idle until timer 2 interrupt
+    // Idle until timer 2 interrupt or valid input detected
     while (T2CONbits.TON == 1) {
         Idle();
+        if (IOcheck()) { break; }
     }
     
     return;

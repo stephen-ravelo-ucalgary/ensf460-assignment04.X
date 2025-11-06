@@ -1,8 +1,9 @@
 /*
- * File:   UART2.c
- * Author: Rushi V
- *
- * Created on October 18, 2020, 9:32 PM
+ * File Name: UART2.c
+ * Assignment: Assignment 4
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
+ * Submission Date: November 7, 2025
  */
 
 
@@ -138,7 +139,7 @@ void Disp2Hex(unsigned int DispData)
     XmitUART2('0',1);  // Disp Hex notation 0x
     XmitUART2('x',1);
     
-    for (i=3; i>=0; i--)
+    for (i=2; i>=0; i--)
     {
         nib = ((DispData >> (4*i)) & 0x000F);
         if (nib >= 0x0A)
@@ -191,7 +192,6 @@ void Disp2Dec(uint16_t Dec_num)
     uint8_t rem;  //remainder in div by 10
     uint16_t quot; 
     uint8_t ctr = 0;  //counter
-    XmitUART2(' ',1);  // Disp Gap
     while(ctr<5)
     {
         quot = Dec_num/(pow(10,(4-ctr)));
@@ -199,8 +199,7 @@ void Disp2Dec(uint16_t Dec_num)
         XmitUART2(rem + 0x30 , 1);
         ctr = ctr + 1;
     }
-    XmitUART2(' ',1);  // Disp Gap
-    // XmitUART2('\n',1);  // new line
+    XmitUART2('\n',1);  // new line
     // XmitUART2('\r',1);  // carriage return
    
     return;
@@ -219,6 +218,17 @@ void Disp2String(char *str) //Displays String of characters
     }
     // XmitUART2(0x0A,2);  //LF
     // XmitUART2(0x0D,1);  //CR 
+    
+    return;
+}
+
+// Displays number of '*' proportional to displayed x value
+void DispMode0(uint16_t x) {
+    Disp2String("\033[2J\033[1;1HMode 0: ");
+    XmitUART2('*', x / 32 + 1);
+    XmitUART2(' ', 1);
+    Disp2Hex(x);
+    XmitUART2('\n', 1);
     
     return;
 }
