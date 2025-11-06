@@ -26,24 +26,24 @@ try:
     
     while True:
         if ser.in_waiting > 0:
-            msg = ser.readline().decode().replace('\x00', '')
-            if msg == "START_READING\n":
+            msg = ser.readline().decode().replace('\x00', '').replace('\n', '')
+            if msg == "START_READING":
                 print("Sampling data...")
                 t0 = time.time()
 
                 # Receive ADC values from the C program that is transmitted to the UART
                 while 1:
                     if ser.in_waiting > 0:
-                        msg = ser.readline().decode().replace('\x00', '')
-                        if (msg == "STOP_READING\n"):
+                        sample_msg = ser.readline().decode().replace('\x00', '').replace('\n', '')
+                        if (sample_msg == "STOP_READING"):
                             break
-                        msg2 = msg.replace('\n', '').lstrip('0')
-                        if msg2 == '':
+                        buffer_data = sample_msg.lstrip('0')
+                        if buffer_data == '':
                             buffer.append(0)
                             voltage.append(0)
                         else:
-                            buffer.append(int(msg2))
-                            voltage.append(float(msg2) * 0.00322265625)
+                            buffer.append(int(buffer_data))
+                            voltage.append(float(buffer_data) * 0.00322265625)
                         sample_times.append(time.time() - t0)
                 
                 # Print buffer, voltage, and time values into the terminal
