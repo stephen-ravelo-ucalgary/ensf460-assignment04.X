@@ -35,11 +35,14 @@ void IOinit() {
 }
 
 // Execute logic for peripheral IO
-uint16_t IOcheck() {  
+uint16_t IOcheck() {
+    // Events for STATE_MODE_0 and STATE_MODE_1
     if (_state == STATE_MODE_0 || _state == STATE_MODE_1) {
+        // PB1 pressed returns event 1
         if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1) {
             return 1;
         }
+        // PB2 pressed returns event 2
         else if (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 1) {
             return 2;
         }

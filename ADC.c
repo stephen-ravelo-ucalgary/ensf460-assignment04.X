@@ -10,8 +10,11 @@
 
 #include "ADC.h"
 
+/*
+ * Configures ADC and returns buffer
+ */
 uint16_t do_ADC(void) {
-    uint16_t ADCvalue ; // 16 bit register used to hold ADC converted digital output ADC1BUF0
+    uint16_t ADCvalue; // 16 bit register used to hold ADC converted digital output ADC1BUF0
     /* ------------- ADC INITIALIZATION ------------------*/
     // Configure ADC by setting bits in AD1CON1 register
     AD1CON1bits.ADSIDL = 0;
@@ -47,11 +50,16 @@ uint16_t do_ADC(void) {
     return (ADCvalue); //returns 10 bit ADC output stored in ADC1BIF0 to calling function
 }
 
-void read_ADC() {
+/*
+ * Samples ADC buffer values for approximately 10 seconds.
+ * Uses START_READING and STOP_READING messages to trigger sampling in
+ * python program.
+ */
+void read_ADC(uint16_t samples) {
     Disp2String("START_READING\n");
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < samples; i++) {
         Disp2Dec(do_ADC());
-        delay_ms(1000);
+        delay_ms(10000/samples);
     }
     Disp2String("STOP_READING\n");
 }

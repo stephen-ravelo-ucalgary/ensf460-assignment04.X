@@ -222,7 +222,7 @@ void Disp2String(char *str) //Displays String of characters
     return;
 }
 
-
+// Displays number of '*' proportional to displayed x value
 void DispMode0(uint16_t x) {
     Disp2String("\033[2J\033[1;1HMode 0: ");
     XmitUART2('*', x / 32 + 1);

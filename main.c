@@ -66,11 +66,7 @@ uint16_t CN_event;
 
 int main(void) {
     
-    /** This is usually where you would add run-once code
-     * e.g., peripheral initialization. For the first labs
-     * you might be fine just having it here. For more complex
-     * projects, you might consider having one or more initialize() functions
-     */
+    // Run once code
     
     AD1PCFG = 0xFFFF; /* keep this line as it sets I/O pins that can also be analog to be digital */
     
@@ -92,8 +88,13 @@ int main(void) {
     uint16_t ADC1_val = do_ADC();
     uint16_t ADC1_last = ADC1_val + 16;
     
+    // Main loop
     while(1) {
         switch(_state) {
+            /* 
+             * Displays number of '*' proportional to displayed ADC value
+             * Pressing PB1 in this state triggers a transition to STATE_MODE_1
+             */
             case STATE_MODE_0:
                 while(_state == STATE_MODE_0) {
                     ADC1_val = do_ADC();
@@ -111,6 +112,11 @@ int main(void) {
                     }
                 }
                 break;
+            /* 
+             * Pressing PB1 in this state triggers a transition to STATE_MODE_2
+             * Pressing PB2 in this state samples ADC data for 10 seconds
+             * A 'hidden' state STATE_READ_ADC protects data sampling
+             */
             case STATE_MODE_1:
                 while (_state == STATE_MODE_1) {
                     Disp2String("\033[2J\033[1;1HMode 1: Press PB2 to start data streaming\n");
@@ -149,10 +155,10 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt(void)
     T2CONbits.TON = 0;
 }
 
-void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void){
-    IFS0bits.T3IF = 0;
-}
-
+/*
+ * CN interrupt subroutine
+ * Triggers CN_event
+ */
 void __attribute__((interrupt, no_auto_psv)) _CNInterrupt(void){
     //Don't forget to clear the CN interrupt flag!
     IFS1bits.CNIF = 0;
