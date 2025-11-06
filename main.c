@@ -1,8 +1,9 @@
 /*
- * File:   main.c
- * Author: UPDATE THIS WITH YOUR GROUP MEMBER NAMES OR POTENTIALLY LOSE POINTS
- *
- * Created on: USE THE INFORMATION FROM THE HEADER MPLAB X IDE GENERATES FOR YOU
+ * File Name: main.c
+ * Assignment: Assignment 4
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
+ * Submission Date: November 7, 2025
  */
 
 // FBS
@@ -125,10 +126,10 @@ int main(void) {
                             _state = STATE_READ_ADC;
                             read_ADC();
                             _state = STATE_MODE_1;
+                            Idle();
                         }
                         CN_event = 0;
                     }
-                    Idle();
                 }
                 break;
             default:

@@ -12,6 +12,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 port_name = '/dev/tty.usbserial-0001'
+# port_name = 'COM3'
 baud_rate = 4800
 buffer = []
 voltage = []

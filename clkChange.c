@@ -1,3 +1,11 @@
+/*
+ * File Name: main.c
+ * Assignment: Assignment 4
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
+ * Submission Date: November 7, 2025
+ */
+
 #include "clkChange.h"
 
 
