@@ -61,13 +61,6 @@
  * You might find it useful to add your own #defines to improve readability here
  */
 
-typedef enum {
-    STATE_MODE_0,
-    STATE_MODE_1,      
-} state_t;
-
-state_t state;
-
 uint16_t CN_event;
 
 int main(void) {
@@ -92,16 +85,16 @@ int main(void) {
     /* Let's set up our UART */    
     InitUART2();
     
-    state = STATE_MODE_0;
+    _state = STATE_MODE_0;
     CN_event = 0;
     
     uint16_t ADC1_val = do_ADC();
     uint16_t ADC1_last = ADC1_val + 16;
     
     while(1) {
-        switch(state) {
+        switch(_state) {
             case STATE_MODE_0:
-                while(state == STATE_MODE_0) {
+                while(_state == STATE_MODE_0) {
                     ADC1_val = do_ADC();
                     if (ADC1_val != ADC1_last) {
                         DispMode0(ADC1_val);
@@ -111,27 +104,31 @@ int main(void) {
                     if (CN_event) {
                         uint16_t IO_event = IOcheck();
                         if (IO_event == 1) {
-                            state = STATE_MODE_1;
+                            _state = STATE_MODE_1;
                         }
                         CN_event = 0;
                     }
                 }
                 break;
             case STATE_MODE_1:
-                while (state == STATE_MODE_1) {
-                    Disp2String("\033[2J\033[HMode 1: Press PB2 to start data streaming\n");
+                while (_state == STATE_MODE_1) {
+                    Disp2String("\033[2J\033[1;1HMode 1: Press PB2 to start data streaming\n");
+                    delay_ms(50);
                     Idle();
                     delay_ms(50);
                     if (CN_event) {
                         uint16_t IO_event = IOcheck();
                         if (IO_event == 1) {
-                            state = STATE_MODE_0;
+                            _state = STATE_MODE_0;
                             DispMode0(ADC1_val);
                         } else if (IO_event == 2) {
+                            _state = STATE_READ_ADC;
                             read_ADC();
+                            _state = STATE_MODE_1;
                         }
                         CN_event = 0;
                     }
+                    Idle();
                 }
                 break;
             default:

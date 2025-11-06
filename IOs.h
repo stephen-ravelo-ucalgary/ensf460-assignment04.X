@@ -14,6 +14,13 @@
 #include "UART2.h"
 #include "timer.h"
 
+typedef enum {
+    STATE_MODE_0,
+    STATE_MODE_1,     
+    STATE_READ_ADC        
+} state_t;
+
+extern state_t _state;
 
 void IOinit();
 uint16_t IOcheck();
