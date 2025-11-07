@@ -12,26 +12,15 @@ state_t _state;
 
 // Initialize peripheral IO
 void IOinit() {
-    // LED1
-    TRISBbits.TRISB9 = 0;
-    
-    // LED2
-    TRISAbits.TRISA6 = 0;
-
     // PB1
     TRISBbits.TRISB7 = 1;
     CNPU2bits.CN23PUE = 1;
     CNEN2bits.CN23IE = 1;  
     
-    // PB3
+    // PB2
     TRISBbits.TRISB4 = 1;
     CNPU1bits.CN1PUE = 1;
     CNEN1bits.CN1IE = 1;
-    
-    // PB3
-    TRISAbits.TRISA4 = 1;
-    CNPU1bits.CN0PUE = 1;
-    CNEN1bits.CN0IE = 1;
 }
 
 // Execute logic for peripheral IO
