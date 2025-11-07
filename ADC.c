@@ -54,12 +54,13 @@ uint16_t do_ADC(void) {
  * Samples ADC buffer values for approximately 10 seconds.
  * Uses START_READING and STOP_READING messages to trigger sampling in
  * python program.
+ * REQUIRES: samples > 100
  */
 void read_ADC(uint16_t samples) {
     Disp2String("START_READING\n");
     for (int i = 0; i < samples; i++) {
         Disp2Dec(do_ADC());
-        delay_ms(10000/samples);
+        delay_ms(10000/samples - 100);
     }
     Disp2String("STOP_READING\n");
 }

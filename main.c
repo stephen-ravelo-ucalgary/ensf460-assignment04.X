@@ -130,7 +130,7 @@ int main(void) {
                             DispMode0(ADC1_val);
                         } else if (IO_event == 2) {
                             _state = STATE_READ_ADC;
-                            read_ADC();
+                            read_ADC(25);
                             _state = STATE_MODE_1;
                             Idle();
                         }
